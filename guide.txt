@@ -1,0 +1,190 @@
+-------------------------------------------------------------------
+
+> npx create-react-app .
+> github repository에 commit
+> 접속: https://ap-northeast-2.console.aws.amazon.com/amplify/home 
+	> 새 amplify
+	> github hosting 연결
+	> repository 주소 JSBeatCode/[repository이름] 입력 후 계속 다음
+	> 저장 및 배포 클릭
+	> https://ap-northeast-2.console.aws.amazon.com/amplify/home 에서 모두 정상 체크되는지 확인
+> git에 commit push 하면 amplify도 배포 시도 함
+> 도메인 추가: 
+	왼쪽 사이드메뉴 > 앱설정 > 도메인 관리 접속 > 도메인 추가
+	연결할 도메인 선택 > 도메인 구성 > 하위 도메인 및 브랜치 선택 > 저장
+=> 성공
+-------------------------------------------------------------------
+[https://docs.amplify.aws/start/q/integration/react/]
+
+-chapter 1: 필수 구성 요소
+
+	> npx amplify configure
+		> 뜻: amplify iam 사용자 등 config 설정 
+		> console load:
+			Specify the AWS Region
+			? region:  # Your preferred region
+			Follow the instructions at
+			https://docs.amplify.aws/cli/start/install/#configure-the-amplify-cli
+
+			to complete the user creation in the AWS console
+			https://console.aws.amazon.com/iamv2/home#/users/create
+		
+		> iam 사용자 생성
+			> 접속: https://us-east-1.console.aws.amazon.com/iamv2/home# 
+			> iam 사용자 생성 > 이름 입력 > 직접 정책 연결 라디오 체크 > 권한추가: AdministratorAccess-Amplify > 다음다음
+			> 클릭: IAM > 사용자 > [방금 만든 사용자] 
+			> 클릭: 보안 자격 증명 > 엑세스 키 만들기 > commandline cli interface
+			> 복사: accessKeyId, secretKeyId 
+			jsd_aws_iam
+			AKIAYLE2Q3HMXO2RAZNR
+			D0Kk4yE9x/BbQACAUrAixUXcQkt6X6QpMatK6Szk
+			
+		> console load:
+			Enter the access key of the newly created user:
+			? accessKeyId:  # YOUR_ACCESS_KEY_ID
+			? secretAccessKey:  # YOUR_SECRET_ACCESS_KEY
+			This would update/create the AWS Profile in your local machine
+			? Profile Name:  # (default)
+
+			Successfully set up the new user.
+
+-chapter 2: 풀스텍 프로젝트 설정
+
+	> npx create-react-app .
+
+	> npm run start
+
+	> npx amplify init 
+		> 뜻: amplify name 및 amplify용 백단 소스 생성
+		? Enter a name for the project reactamplified
+		The following configuration will be applied:
+
+		?Project information
+		| Name:  reactamplified
+		| Environment: dev
+		| Default editor: Visual Studio Code
+		| App type: javascript
+		| Javascript framework: react
+		| Source Directory Path: src
+		| Distribution Directory Path: build
+		| Build Command: npm run-script build
+		| Start Command: npm run-script start
+
+		? Initialize the project with the above configuration? Yes
+		Using default provider  awscloudformation
+		? Select the authentication method you want to use: AWS profile
+
+		...
+
+		? Please choose the profile you want to use default
+
+	> npm install aws-amplify
+
+	> src/index.js 에 추가코딩
+		import { Amplify } from 'aws-amplify';
+		import awsExports from './aws-exports';
+		Amplify.configure(awsExports);
+
+-chapter 3: add api
+
+	> npx amplify add api
+	
+	>
+	? Select from one of the below mentioned services: GraphQL
+	? Here is the GraphQL API that we will create. Select a setting to edit or continue Continue
+	? Choose a schema template: Single object with fields (e.g., “Todo” with ID, name, description)
+	
+	> amplify/backend/api/myapi/schema.graphql 생성 확인
+	
+	> npx amplify push
+	
+	>
+	? Are you sure you want to continue? Y
+
+	# You will be walked through the following questions for GraphQL code generation
+	? Do you want to generate code for your newly created GraphQL API? Y
+	? Choose the code generation language target: javascript
+	? Enter the file name pattern of graphql queries, mutations and subscriptions: src/graphql/**/*.js
+	? Do you want to generate/update all possible GraphQL operations - queries, mutations and subscriptions? Y
+	? Enter maximum statement depth [increase from default if your schema is deeply nested]: 2
+	
+	> api status: npx amplify status
+	
+	> 전체 콘솔보기: npx amplify console
+	> graphql api 콘솔보기: npx amplify console api
+	
+	> graphql 테스트하기(자바설치필요): npx amplify mock api
+	
+	
+	> graphql 쿼리 날리기:
+		mutation createTodo {
+		  createTodo(input: {
+			name: "Build an API"
+			description: "Build a serverless API with Amplify and GraphQL"
+		  }) {
+			id
+			name
+			description
+		  }
+		}
+
+		query listTodos {
+		  listTodos {
+			items {
+			  id
+			  description
+			  name
+			}
+		  }
+		}
+	
+	> src/app.js 코딩 
+	
+	> npm run start (npx amplify mock api 킨 상태에서)
+	
+	
+-chapter 3: authorization & authentication
+	
+	> npx amplify add auth
+	
+	> 
+	? Do you want to use the default authentication and security configuration? Default configuration
+	Warning: you will not be able to edit these selections. 
+	? How do you want users to be able to sign in? Username
+	? Do you want to configure advanced settings? No, I am done.
+	
+	> npx amplify push
+	
+	> √ Are you sure you want to continue? (Y/n) · yes
+	> 
+	? Do you want to update code for your updated GraphQL API Yes
+	? Do you want to generate GraphQL statements (queries, mutations and subscription) based on your schema types?
+	This will overwrite your current graphql queries, mutations and subscriptions Yes
+	
+	> npx amplify console
+	
+	> 로그인 페이지 만들기
+	
+		> npm install @aws-amplify/ui-react
+		
+		> src/App.js 코딩 추가
+		
+		> npm run start (jsdno0 / Jsdno4273!)
+		
+
+-chapter 4: hosting
+
+	>npx amplify add hosting
+	
+	>
+	? Select the plugin module to execute: Hosting with Amplify Console (Managed hosting with custom domains, Continuous deployment)
+	? Choose a type: Manual Deployment
+	
+	> npx amplify publish
+-추가	
+	> 대시보드
+		> https://ap-northeast-2.console.aws.amazon.com/appsync
+		> https://ap-northeast-2.console.aws.amazon.com/amplify
+	> vite 추가변경코딩
+		> amplify\.config\project-config.json
+		> vite.config.js
