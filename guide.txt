@@ -1,5 +1,5 @@
 -------------------------------------------------------------------
-
+> npm install -g @aws-amplify/cli
 > npx create-react-app .
 > github repository에 commit
 > 접속: https://ap-northeast-2.console.aws.amazon.com/amplify/home 
