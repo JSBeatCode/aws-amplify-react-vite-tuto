@@ -16,6 +16,8 @@
 -------------------------------------------------------------------
 [https://docs.amplify.aws/start/q/integration/react/]
 
+> npm install -g @aws-amplify/cli
+
 -chapter 1: 필수 구성 요소
 
 	> npx amplify configure
